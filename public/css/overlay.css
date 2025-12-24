@@ -1,1 +1,178 @@
-body{background:#00ff00}
+/* =========================
+   Overlay Base
+========================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================
+   Overlay Panel
+========================= */
+.overlay-panel {
+  width: 100%;
+  max-width: 420px;
+  background: #161922;
+  border-radius: 12px;
+  border: 1px solid #232737;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.25s ease;
+}
+
+.overlay.active .overlay-panel {
+  transform: translateY(0) scale(1);
+}
+
+/* =========================
+   Header
+========================= */
+.overlay-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.overlay-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.overlay-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.overlay-close:hover {
+  color: #fff;
+}
+
+/* =========================
+   Content
+========================= */
+.overlay-content {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.overlay-content p {
+  margin-bottom: 12px;
+}
+
+/* =========================
+   Forms
+========================= */
+.overlay-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.overlay-form label {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.overlay-form input {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f1115;
+  border: 1px solid #232737;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.overlay-form input:focus {
+  outline: none;
+  border-color: #2d7dff;
+}
+
+/* =========================
+   Actions
+========================= */
+.overlay-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.overlay-actions .btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.overlay-actions .btn-primary {
+  background: #2d7dff;
+  color: #fff;
+}
+
+.overlay-actions .btn-primary:hover {
+  background: #1f66dd;
+}
+
+.overlay-actions .btn-secondary {
+  background: #2a2f45;
+  color: #fff;
+}
+
+.overlay-actions .btn-secondary:hover {
+  background: #3a4060;
+}
+
+/* =========================
+   Status Messages
+========================= */
+.overlay-status {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.overlay-status.success {
+  color: #2d7dff;
+}
+
+.overlay-status.error {
+  color: #ff4d4d;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 480px) {
+  .overlay-panel {
+    margin: 0 16px;
+    padding: 20px;
+  }
+
+  .overlay-title {
+    font-size: 16px;
+  }
+}
