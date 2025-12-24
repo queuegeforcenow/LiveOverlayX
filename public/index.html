@@ -1,1 +1,254 @@
-<h1>LiveOverlayX Home</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveOverlayX | YouTube × Twitch コメント統合</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <meta name="description" content="YouTubeとTwitchのコメントをリアルタイムで統合し、OBSで使えるオーバーレイを即生成。" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #05070d;
+      --card: rgba(255,255,255,0.06);
+      --accent: #00f2ff;
+      --accent2: #6a5cff;
+      --text: #ffffff;
+      --sub: #a0a6c3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, #0d1b3a 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, #1a0f3a 0%, transparent 45%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 80px 20px 40px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 64px;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      margin-top: 16px;
+      font-size: 18px;
+      color: var(--sub);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--sub);
+    }
+
+    .field input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+
+    .field input::placeholder {
+      color: #7c82a8;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      margin-top: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 0 24px rgba(0,242,255,0.35);
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(0,242,255,0.55);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .feature {
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .feature p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--sub);
+      font-size: 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 100%, rgba(0,242,255,0.12), transparent 40%);
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<header>
+  <h1>LiveOverlayX</h1>
+  <p>YouTube と Twitch のコメントを、ひとつの配信体験へ。</p>
+</header>
+
+<main>
+  <!-- 左：入力 -->
+  <div class="card">
+    <h2>配信情報を入力</h2>
+
+    <div class="field">
+      <label for="twitchId">Twitch 配信者ID</label>
+      <input id="twitchId" type="text" placeholder="例: shroud">
+    </div>
+
+    <div class="field">
+      <label for="youtubeId">YouTube 動画ID</label>
+      <input id="youtubeId" type="text" placeholder="例: dQw4w9WgXcQ">
+    </div>
+
+    <button class="start-btn" id="goSetup">
+      設定画面へ進む
+    </button>
+  </div>
+
+  <!-- 右：説明 -->
+  <div class="card">
+    <h2>できること</h2>
+
+    <div class="features">
+      <div class="feature">
+        <h3>リアルタイム統合</h3>
+        <p>YouTube / Twitch のコメントを即時反映。</p>
+      </div>
+
+      <div class="feature">
+        <h3>OBS完全対応</h3>
+        <p>グリーンバック透過でそのまま配信に。</p>
+      </div>
+
+      <div class="feature">
+        <h3>URL制御</h3>
+        <p>速度・フォント・表示形式をURLで調整。</p>
+      </div>
+
+      <div class="feature">
+        <h3>メンバー装飾</h3>
+        <p>サブスク・メンバーを特別演出。</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © LiveOverlayX
+</footer>
+
+<script>
+  document.getElementById("goSetup").addEventListener("click", () => {
+    const twitch = document.getElementById("twitchId").value.trim();
+    const yt = document.getElementById("youtubeId").value.trim();
+
+    if (!twitch || !yt) {
+      alert("Twitch ID と YouTube 動画IDを入力してください");
+      return;
+    }
+
+    location.href = `/setup.html?twitch=${encodeURIComponent(twitch)}&yt=${encodeURIComponent(yt)}`;
+  });
+</script>
+
+</body>
+</html>
