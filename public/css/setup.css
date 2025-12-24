@@ -1,1 +1,245 @@
-body{background:#111;color:#fff}
+/* =========================
+   Base
+========================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+  background: radial-gradient(1200px 600px at top, #1b2030, #0b0d12);
+  color: #fff;
+}
+
+/* =========================
+   Layout
+========================= */
+.setup-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.setup-header {
+  margin-bottom: 40px;
+}
+
+.setup-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.setup-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #9aa4bf;
+}
+
+/* =========================
+   Card
+========================= */
+.setup-card {
+  background: linear-gradient(180deg, #151926, #0f121c);
+  border: 1px solid #242a40;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.setup-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   Form
+========================= */
+.setup-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #9aa4bf;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 14px;
+  font-size: 14px;
+  background: #0b0e16;
+  border: 1px solid #242a40;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2d7dff;
+}
+
+/* =========================
+   Toggles
+========================= */
+.toggle-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0b0e16;
+  border: 1px solid #242a40;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.toggle-group span {
+  font-size: 14px;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #333a55;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 3px;
+  left: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+}
+
+.toggle input:checked + .toggle-slider {
+  background: #2d7dff;
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* =========================
+   Slider
+========================= */
+.range-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.range-group input[type="range"] {
+  width: 100%;
+}
+
+/* =========================
+   Font Preview
+========================= */
+.font-preview {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #0b0e16;
+  border: 1px dashed #242a40;
+  font-size: 16px;
+}
+
+/* =========================
+   Actions
+========================= */
+.setup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.btn {
+  padding: 12px 22px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #2d7dff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1f66dd;
+}
+
+.btn-secondary {
+  background: #2a2f45;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #3a4060;
+}
+
+/* =========================
+   Generated URL
+========================= */
+.generated-url {
+  margin-top: 16px;
+  padding: 14px;
+  background: #0b0e16;
+  border: 1px solid #242a40;
+  border-radius: 8px;
+  font-size: 13px;
+  word-break: break-all;
+  color: #9aa4bf;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 640px) {
+  .setup-title {
+    font-size: 26px;
+  }
+
+  .setup-card {
+    padding: 20px;
+  }
+
+  .setup-actions {
+    flex-direction: column;
+  }
+}
