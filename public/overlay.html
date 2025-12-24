@@ -1,1 +1,159 @@
-<div id='layer'></div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>LiveOverlayX Overlay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  :root {
+    --bg-green: #00ff00;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-green); /* OBSクロマキー用 */
+    overflow: hidden;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  #overlay-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .comment {
+    position: absolute;
+    left: 100%;
+    bottom: 60px;
+    white-space: nowrap;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-weight: 500;
+    will-change: transform;
+    animation-name: flow;
+    animation-timing-function: linear;
+  }
+
+  .comment.twitch {
+    border-left: 6px solid #9146ff;
+  }
+
+  .comment.youtube {
+    border-left: 6px solid #ff0033;
+  }
+
+  .comment.member {
+    background: linear-gradient(
+      90deg,
+      #ff00cc,
+      #3333ff
+    );
+    box-shadow:
+      0 0 12px rgba(255, 0, 204, 0.9),
+      0 0 24px rgba(51, 51, 255, 0.6);
+  }
+
+  @keyframes flow {
+    from {
+      transform: translateX(0) translateY(40px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-130vw) translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="overlay-root"></div>
+
+<script>
+  /* ===============================
+     URL パラメータ
+     =============================== */
+  const params = new URLSearchParams(location.search);
+
+  const room = params.get("room");
+  const speed = Number(params.get("speed") || 15);
+  const fontSize = Number(params.get("font") || 40);
+  const showPlatform = params.get("platform") !== "false";
+  const showUser = params.get("user") !== "false";
+  const memberEffect = params.get("member") !== "false";
+
+  if (!room) {
+    console.warn("room パラメータがありません");
+  }
+
+  /* ===============================
+     WebSocket 接続
+     =============================== */
+  const protocol = location.protocol === "https:" ? "wss" : "ws";
+  const ws = new WebSocket(`${protocol}://${location.host}/ws/${room}`);
+
+  ws.onopen = () => {
+    console.log("LiveOverlayX connected");
+  };
+
+  ws.onerror = err => {
+    console.error("WebSocket error", err);
+  };
+
+  ws.onmessage = e => {
+    try {
+      const data = JSON.parse(e.data);
+      spawnComment(data);
+    } catch {}
+  };
+
+  /* ===============================
+     コメント生成
+     =============================== */
+  function spawnComment(data) {
+    const div = document.createElement("div");
+
+    div.classList.add("comment");
+    div.classList.add(data.platform?.toLowerCase());
+
+    if (memberEffect && data.member) {
+      div.classList.add("member");
+    }
+
+    let text = "";
+    if (showPlatform && data.platform) {
+      text += data.platform + "-";
+    }
+    if (showUser && data.user) {
+      text += data.user + ": ";
+    }
+    text += data.text || "";
+
+    div.textContent = text;
+    div.style.fontSize = fontSize + "px";
+    div.style.animationDuration = speed + "s";
+
+    /* レーンずらし（被り防止） */
+    const lane = Math.floor(Math.random() * 4);
+    div.style.bottom = 40 + lane * (fontSize + 16) + "px";
+
+    document.getElementById("overlay-root").appendChild(div);
+
+    setTimeout(() => {
+      div.remove();
+    }, speed * 1000);
+  }
+</script>
+
+</body>
+</html>
