@@ -1,51 +1,71 @@
-
 import express from "express";
-import http from "http";
 import { WebSocketServer } from "ws";
-import connectTwitch from "./twitch.js";
-import connectYouTube from "./youtube.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { connectTwitch } from "./twitch.js";
+import { connectYouTube } from "./youtube.js";
 import { saveComment } from "./store.js";
-import { nanoid } from "nanoid";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = http.createServer(app);
+const PORT = process.env.PORT || 3000;
+
+// ===== Static =====
+app.use(express.static(path.join(__dirname, "../public")));
+
+// ===== HTTP =====
+app.get("/health", (_, res) => res.send("OK"));
+
+// ===== Server =====
+const server = app.listen(PORT, () => {
+  console.log("LiveOverlayX running on port", PORT);
+});
+
+// ===== WebSocket =====
 const wss = new WebSocketServer({ server });
 
-app.use(express.json());
-app.use(express.static("public"));
-
-const rooms = new Map();
+const clients = new Map(); 
+// key: ws , value: { twitch, youtube }
 
 wss.on("connection", (ws, req) => {
-  const roomId = req.url.split("/").pop();
-  ws.roomId = roomId;
-  if (!rooms.has(roomId)) rooms.set(roomId, []);
-  rooms.get(roomId).push(ws);
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const twitch = url.searchParams.get("twitch");
+  const youtube = url.searchParams.get("youtube");
+
+  clients.set(ws, { twitch, youtube });
+
+  ws.on("close", () => {
+    clients.delete(ws);
+  });
 });
 
-function broadcast(roomId, data) {
-  rooms.get(roomId)?.forEach(ws => {
-    if (ws.readyState === 1) ws.send(JSON.stringify(data));
-  });
+// ===== Broadcast =====
+function broadcast(comment) {
+  const payload = JSON.stringify(comment);
+
+  for (const [ws, target] of clients.entries()) {
+    if (
+      (comment.platform === "Twitch" && target.twitch === comment.channel) ||
+      (comment.platform === "YouTube" && target.youtube === comment.videoId)
+    ) {
+      if (ws.readyState === ws.OPEN) {
+        ws.send(payload);
+      }
+    }
+  }
 }
 
-app.post("/api/create", (req, res) => {
-  const { twitch, youtube } = req.body;
-  const roomId = nanoid(8);
-
-  connectTwitch(twitch, msg => {
-    saveComment(msg);
-    broadcast(roomId, msg);
-  });
-
-  connectYouTube(youtube, msg => {
-    saveComment(msg);
-    broadcast(roomId, msg);
-  });
-
-  res.json({
-    overlayUrl: `/overlay.html?room=${roomId}`
-  });
+// ===== Twitch =====
+connectTwitch((data) => {
+  saveComment(data);
+  broadcast(data);
 });
 
-server.listen(process.env.PORT || 3000);
+// ===== YouTube =====
+connectYouTube((data) => {
+  saveComment(data);
+  broadcast(data);
+});
+
